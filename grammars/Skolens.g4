@@ -2,10 +2,13 @@ grammar Skolens;
 
 program: stat* EOF;
 
-stat: ifstat | elsestat | teikt | assign | expr ';';
+stat: conditionalStat | teikt | assign | expr ';';
 
-ifstat: 'ja' '(' expr ')' '{' stat* '}';
-elsestat: 'citadi' '{' stat* '}';
+conditionalStat: ifStat elseIfStat* elseStat?;
+
+ifStat: 'ja' '(' expr ')' '{' stat* '}';
+elseIfStat: 'citadi' 'ja' '(' expr ')' '{' stat* '}';
+elseStat: 'citadi' '{' stat* '}';
 
 teikt: 'teikt ' expr ';';
 

@@ -26,22 +26,55 @@ export default class SkolensInterpreter extends SkolensVisitor {
     this.visit(ctx.getChild(0));
   }
 
+  visitConditionalStat(ctx) {
+    for (let i = 0; i < ctx.getChildCount(); i++) {
+      // visit the conditional statement
+      const res = this.visit(ctx.getChild(i));
+      // if the conditional returned true, stop the conditional
+      if (res) return;
+    }
+  }
+
+  visitIfStat(ctx) {
+    // evaluate the expression in parenthases
+    const exprRes = this.visit(ctx.getChild(2));
+
+    // if expression evaluates to a falsy value, return false
+    if (!this.#isValueTruthy(exprRes)) return false;
+
+    // execute statements inside the if
+    for (let i = 5; i < ctx.getChildCount() - 1; i++) {
+      this.visit(ctx.getChild(i));
+    }
+    return true;
+  }
+
+  visitElseIfStat(ctx) {
+    // evaluate the expression in parenthases
+    const exprRes = this.visit(ctx.getChild(3));
+
+    // if expression evaluates to a falsy value, return false
+    if (!this.#isValueTruthy(exprRes)) return false;
+
+    // execute statements inside the else-if
+    for (let i = 6; i < ctx.getChildCount() - 1; i++) {
+      this.visit(ctx.getChild(i));
+    }
+    return true;
+  }
+
+  visitElseStat(ctx) {
+    // execute statements inside the else
+    for (let i = 2; i < ctx.getChildCount() - 1; i++) {
+      this.visit(ctx.getChild(i));
+    }
+    return true;
+  }
+
   visitTeikt(ctx) {
     let outputExpr = ctx.getChild(1);
     const outputVal = this.visit(outputExpr);
     console.log(outputVal);
-  }
-
-  visitIfstat(ctx) {
-    // evaluate the expression in parenthases
-    const exprRes = this.visit(ctx.getChild(2));
-
-    // if expression evaluates to a truthy value, return
-    if (this.#isValueTruthy(exprRes)) {
-      for (let i = 5; i < ctx.getChildCount() - 1; i++) {
-        this.visit(ctx.getChild(i));
-      }
-    }
   }
 
   visitAssign(ctx) {
