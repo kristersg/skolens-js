@@ -2,7 +2,12 @@ grammar Skolens;
 
 program: stat* EOF;
 
-stat: conditionalStat | teikt | assign | expr ';';
+stat:
+	conditionalStat
+	| teikt
+	| variableMethodCalls
+	| assign
+	| expr ';';
 
 conditionalStat: ifStat elseIfStat* elseStat?;
 
@@ -10,15 +15,26 @@ ifStat: 'ja' '(' expr ')' '{' stat* '}';
 elseIfStat: 'cit\u0101di' 'ja' '(' expr ')' '{' stat* '}';
 elseStat: 'cit\u0101di' '{' stat* '}';
 
-teikt: 'teikt ' expr ';';
+teikt: PRINT expr ';';
 
-assign: ID '=' expr ';' | type ID '=' expr ';';
+variableMethodCalls:
+	ID '.' PIEVIENOT '(' expr ')' ';'			# ListAdd
+	| ID '.' DZEST '(' expr ')' ';'				# ListRemove
+	| ID '.' IEVIETOT '(' expr ',' expr ')' ';'	# ListInsert;
+
+assign:
+	ID '[' expr ']' '=' expr ';'	# ListAssign
+	| ID '=' expr ';'				# ReAssign
+	| type ID '=' expr ';'			# NewAssign;
 
 expr:
 	ID										# Id
 	| NUM									# Num
 	| STRING								# String
 	| BOOL									# Bool
+	| '[' (expr (',' expr)*)? ']'			# List
+	| ID '[' expr ']'						# ListAccess
+	| ID '.' GARUMS							# ListLength
 	| '(' expr ')'							# Paren
 	| expr 'un' expr						# LogicOp
 	| expr 'vai' expr						# LogicOp
@@ -45,6 +61,8 @@ LPAREN: '(';
 RPAREN: ')';
 LCURL: '{';
 RCURL: '}';
+LBRAC: '[';
+RBRAC: ']';
 EQ: '==';
 NOTEQ: '!=';
 LESS: '<';
@@ -55,14 +73,20 @@ AND: 'un';
 OR: 'vai';
 CONCAT: '..';
 DOT: '.';
+COMMA: ',';
 
-PRINT: 'teikt ';
+PIEVIENOT: 'pievienot';
+DZEST: 'dz\u0113st';
+IEVIETOT: 'ievietot';
+GARUMS: 'garums';
+
+PRINT: 'teikt';
 IF: 'ja';
 ELSE: 'cit\u0101di';
 
 BOOL: 'patiess' | 'aplams';
-STRING: '"' (ESC | ~["\\])* '"';
-fragment ESC: '\\' ["\\];
+STRING: '\'' (ESC | ~['\\])* '\'';
+fragment ESC: '\\' '\'';
 NUM: [+|-]? [0-9]+ (DOT [0-9]+)?;
 ID: [a-zA-Z\u0080-\uFFFF_][a-zA-Z\u0080-\uFFFF_0-9]*;
 WS: [ \t\n\r\f]+ -> skip;

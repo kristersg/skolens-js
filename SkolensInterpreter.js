@@ -5,8 +5,9 @@ import SkolensParser from './lib/SkolensParser.js';
 // ctx.getChildCount() - How many children are there? If there is none, then this node represents a leaf node
 // ctx.getChild(n) - Get the n-th child of the node
 
+const types = ['skaitlis', 'teksts', 'būls', 'saraksts'];
+
 export default class SkolensInterpreter extends SkolensVisitor {
-  static types = { skaitlis: 'number', teksts: 'string', būls: 'boolean' };
   variables = new Map();
 
   start(ctx) {
@@ -71,102 +72,172 @@ export default class SkolensInterpreter extends SkolensVisitor {
 
   visitTeikt(ctx) {
     let outputExpr = ctx.getChild(1);
-    const outputVal = this.visit(outputExpr);
+    let outputVal = this.visit(outputExpr);
+    if (typeof outputVal == 'boolean') {
+      outputVal == true ? (outputVal = 'patiess') : (outputVal = 'aplams');
+    }
     console.log(outputVal);
   }
 
-  visitAssign(ctx) {
-    // if has 5 children, create a new variable
-    if (ctx.getChildCount() == 5) {
-      const varType = ctx.getChild(0).getText();
-      const varName = ctx.getChild(1).getText();
-      const varVal = this.visit(ctx.getChild(3));
-
-      // check if a variable with the name already exists
-      if (this.variables.has(varName)) {
-        console.error(`Error: variable with name '${varName}' already exists!`);
-        process.exit(1);
-      }
-
-      // check if a correct type is provided
-      if (!Object.keys(SkolensInterpreter.types).includes(varType)) {
-        console.error(`Error: type '${varType}' not recognized!`);
-        process.exit(1);
-      }
-
-      // check if variable and expression types match
-      if (SkolensInterpreter.types[varType] != typeof varVal) {
-        console.error(`Error: can not assign a value of type ${typeof varVal} to variable of type ${SkolensInterpreter.types[varType]}!`);
-        process.exit(1);
-      }
-
-      // if all good, add the new variable to variable pool
-      this.variables.set(varName, { type: SkolensInterpreter.types[varType], value: varVal });
+  visitListAdd(ctx) {
+    // check if a variable with the name exists
+    const listName = ctx.getChild(0).getText();
+    if (!this.variables.has(listName)) {
+      console.error(`Error: list with name '${listName}' not found in current scope!`);
+      process.exit(1);
     }
-    // if has 4 children, try to reassign
-    else {
-      const varName = ctx.getChild(0).getText();
-      const varVal = this.visit(ctx.getChild(2));
 
-      // check if a variable with the name already exists
-      if (!this.variables.has(varName)) {
-        console.error(`Error: variable with name '${varName}' not found in current scope!`);
-        process.exit(1);
-      }
-
-      // check if variable and expression types match
-      if (this.variables.get(varName)['type'] != typeof varVal) {
-        console.error(`Error: can not assign a value of type ${typeof varVal} to variable of type ${this.variables.get(varName)['type']}!`);
-        process.exit(1);
-      }
-
-      // if all good, assign the new value
-      this.variables.get(varName)['value'] = varVal;
+    // check if that variable even is a list
+    if (this.variables.get(listName)['type'] != 'saraksts') {
+      console.error(`Error: attempt to add a list element, but variable ${varName} is not a list!`);
+      process.exit(1);
     }
+
+    // if all good, add the element to the end of the list
+    const newVal = this.visit(ctx.getChild(4));
+    this.variables.get(listName)['value'].push(newVal);
   }
 
-  visitExpr(ctx) {
-    // if has single child, return it's value
-    if (ctx.getChildCount() == 1) {
-      const child = ctx.getChild(0);
-      // if value is a string, remove quotes and return
-      if (child.symbol.type == SkolensParser.STRING) {
-      }
-      // if value is a number, return number value
-      if (child.symbol.type == SkolensParser.INT) {
-      }
-      // if value is a bool, return true or false
-      if (child.symbol.type == SkolensParser.BOOL) {
-      }
-      // if value is an identificator, return the variable's value
-      if (child.symbol.type == SkolensParser.ID) {
-      }
+  visitListRemove(ctx) {
+    // check if a variable with the name exists
+    const listName = ctx.getChild(0).getText();
+    if (!this.variables.has(listName)) {
+      console.error(`Error: list with name '${listName}' not found in current scope!`);
+      process.exit(1);
     }
-    // if has 3 children, calculate the value of expression
-    else if (ctx.getChildCount() == 3) {
-      // if first and last children are parenthases, return the expression between them
-      if (ctx.getChild(0).symbol && ctx.getChild(0).symbol.type == SkolensParser.LPAREN) {
-      }
-      // get the two child values
-      const leftVal = this.visit(ctx.getChild(0));
-      const rightVal = this.visit(ctx.getChild(2));
-      const op = ctx.getChild(1);
 
-      // if op is a comparison,
-
-      // if both numbers, allow all operations
-      if (typeof leftVal == 'number' && typeof rightVal == 'number') {
-        if (op.symbol.type == SkolensParser.ADD) return leftVal + rightVal;
-        if (op.symbol.type == SkolensParser.SUB) return leftVal - rightVal;
-        if (op.symbol.type == SkolensParser.MUL) return leftVal * rightVal;
-        if (op.symbol.type == SkolensParser.DIV) return leftVal / rightVal;
-      }
-      // if at least one is a string, allow only addition
-      else {
-        console.error('Error: mathematical operations can only be used on numbers!');
-        process.exit(1);
-      }
+    // check if that variable even is a list
+    if (this.variables.get(listName)['type'] != 'saraksts') {
+      console.error(`Error: attempt to access a list element, but variable ${varName} is not a list!`);
+      process.exit(1);
     }
+
+    // check if the index expression evaluates to a valid integer
+    const index = this.visit(ctx.getChild(4));
+    if (!Number.isInteger(index)) {
+      console.error(`Error: '${index}' is not a valid list index!`);
+      process.exit(1);
+    }
+
+    // check if list is long enough
+    if (this.variables.get(listName)['value'].length <= index || index < 0) {
+      console.error(`Error: list index '${index}' is out of bounds!`);
+      process.exit(1);
+    }
+
+    // if all good, assign the new value
+    this.variables.get(listName)['value'].splice(index, 1);
+  }
+
+  visitListInsert(ctx) {
+    // check if a variable with the name exists
+    const listName = ctx.getChild(0).getText();
+    if (!this.variables.has(listName)) {
+      console.error(`Error: list with name '${listName}' not found in current scope!`);
+      process.exit(1);
+    }
+
+    // check if that variable even is a list
+    if (this.variables.get(listName)['type'] != 'saraksts') {
+      console.error(`Error: attempt to access a list element, but variable ${varName} is not a list!`);
+      process.exit(1);
+    }
+
+    // check if the index expression evaluates to a valid integer
+    const index = this.visit(ctx.getChild(4));
+    if (!Number.isInteger(index)) {
+      console.error(`Error: '${index}' is not a valid list index!`);
+      process.exit(1);
+    }
+
+    // check if list is long enough
+    if (index < 0) {
+      console.error(`Error: list index '${index}' is out of bounds!`);
+      process.exit(1);
+    }
+
+    // if all good, assign the new value
+    const newVal = this.visit(ctx.getChild(6));
+    this.variables.get(listName)['value'].splice(index, 0, newVal);
+  }
+
+  visitListAssign(ctx) {
+    // check if a variable with the name exists
+    const listName = ctx.getChild(0).getText();
+    if (!this.variables.has(listName)) {
+      console.error(`Error: list with name '${listName}' not found in current scope!`);
+      process.exit(1);
+    }
+
+    // check if that variable even is a list
+    if (this.variables.get(listName)['type'] != 'saraksts') {
+      console.error(`Error: attempt to access a list element, but variable ${varName} is not a list!`);
+      process.exit(1);
+    }
+
+    // check if the index expression evaluates to a valid integer
+    const index = this.visit(ctx.getChild(2));
+    if (!Number.isInteger(index)) {
+      console.error(`Error: '${index}' is not a valid list index!`);
+      process.exit(1);
+    }
+
+    // check if list is long enough
+    if (this.variables.get(listName)['value'].length <= index || index < 0) {
+      console.error(`Error: list index '${index}' is out of bounds!`);
+      process.exit(1);
+    }
+
+    // if all good, assign the new value
+    const newVal = this.visit(ctx.getChild(5));
+    this.variables.get(listName)['value'][index] = newVal;
+  }
+
+  visitNewAssign(ctx) {
+    const varType = ctx.getChild(0).getText();
+    const varName = ctx.getChild(1).getText();
+    const varVal = this.visit(ctx.getChild(3));
+
+    // check if a variable with the name already exists
+    if (this.variables.has(varName)) {
+      console.error(`Error: variable with name '${varName}' already exists!`);
+      process.exit(1);
+    }
+
+    // check if a correct type is provided
+    if (!types.includes(varType)) {
+      console.error(`Error: type '${varType}' not recognized!`);
+      process.exit(1);
+    }
+
+    // check if variable and expression types match
+    if (!this.#typeMatchesValue(varType, varVal)) {
+      console.error(`Error: can not assign a value of type ${typeof varVal} to variable of type ${SkolensInterpreter.types[varType]}!`);
+      process.exit(1);
+    }
+
+    // if all good, add the new variable to variable pool
+    this.variables.set(varName, { type: varType, value: varVal });
+  }
+
+  visitReAssign(ctx) {
+    const varName = ctx.getChild(0).getText();
+    const varVal = this.visit(ctx.getChild(2));
+
+    // check if a variable with the name already exists
+    if (!this.variables.has(varName)) {
+      console.error(`Error: variable with name '${varName}' not found in current scope!`);
+      process.exit(1);
+    }
+
+    // check if variable and expression types match
+    if (!this.#typeMatchesValue(this.variables.get(varName)['type'], varVal)) {
+      console.error(`Error: can not assign a value of type ${typeof varVal} to variable of type ${this.variables.get(varName)['type']}!`);
+      process.exit(1);
+    }
+
+    // if all good, assign the new value
+    this.variables.get(varName)['value'] = varVal;
   }
 
   visitId(ctx) {
@@ -186,7 +257,68 @@ export default class SkolensInterpreter extends SkolensVisitor {
   }
 
   visitBool(ctx) {
-    return ctx.getChild(0).getText() == 'patiess';
+    return ctx.getChild(0).getText().toLowerCase() == 'patiess';
+  }
+
+  visitList(ctx) {
+    // if only 2 children, return an empty list
+    if (ctx.getChildCount() == 2) return [];
+
+    // add all expressions to a new list and return it
+    let newList = [];
+    for (let i = 1; i < ctx.getChildCount() - 1; i += 2) {
+      newList.push(this.visit(ctx.getChild(i)));
+    }
+    return newList;
+  }
+
+  visitListAccess(ctx) {
+    // check if a variable with the name exists
+    const listName = ctx.getChild(0).getText();
+    if (!this.variables.has(listName)) {
+      console.error(`Error: list with name '${listName}' not found in current scope!`);
+      process.exit(1);
+    }
+
+    // check if that variable even is a list
+    if (this.variables.get(listName)['type'] != 'saraksts') {
+      console.error(`Error: attempt to access a list element, but variable ${varName} is not a list!`);
+      process.exit(1);
+    }
+
+    // check if the index expression evaluates to an integer
+    const index = this.visit(ctx.getChild(2));
+    if (!Number.isInteger(index)) {
+      console.error(`Error: '${index}' is not a valid list index!`);
+      process.exit(1);
+    }
+
+    // check if list is long enough
+    if (this.variables.get(listName)['value'].length <= index || index < 0) {
+      console.error(`Error: list index '${index}' is out of bounds!`);
+      process.exit(1);
+    }
+
+    // if all good, return the value
+    return this.variables.get(listName)['value'][index];
+  }
+
+  visitListLength(ctx) {
+    // check if a variable with the name exists
+    const listName = ctx.getChild(0).getText();
+    if (!this.variables.has(listName)) {
+      console.error(`Error: list with name '${listName}' not found in current scope!`);
+      process.exit(1);
+    }
+
+    // check if that variable even is a list
+    if (this.variables.get(listName)['type'] != 'saraksts') {
+      console.error(`Error: attempt to access a list element, but variable ${varName} is not a list!`);
+      process.exit(1);
+    }
+
+    // if all good, return the list's length
+    return this.variables.get(listName)['value'].length;
   }
 
   visitParen(ctx) {
@@ -258,6 +390,21 @@ export default class SkolensInterpreter extends SkolensVisitor {
     if (typeof rightVal == 'boolean') rightVal = 'patiess';
 
     return String(leftVal) + String(rightVal);
+  }
+
+  #typeMatchesValue(type, val) {
+    switch (type) {
+      case 'saraksts':
+        return Array.isArray(val);
+      case 'skaitlis':
+        return typeof val == 'number';
+      case 'teksts':
+        return typeof val == 'string';
+      case 'būls':
+        return typeof val == 'boolean';
+      default:
+        return false;
+    }
   }
 
   #isValueTruthy(val) {
