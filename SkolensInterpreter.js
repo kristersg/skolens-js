@@ -196,6 +196,15 @@ export default class SkolensInterpreter extends SkolensVisitor {
     return this.visit(ctx.getChild(1));
   }
 
+  visitLogicOp(ctx) {
+    const leftVal = this.visit(ctx.getChild(0));
+    const rightVal = this.visit(ctx.getChild(2));
+    const op = ctx.getChild(1);
+
+    if (op.symbol.type == SkolensParser.AND) return this.#isValueTruthy(leftVal) && this.#isValueTruthy(rightVal);
+    if (op.symbol.type == SkolensParser.OR) return this.#isValueTruthy(leftVal) || this.#isValueTruthy(rightVal);
+  }
+
   visitMathOp(ctx) {
     const leftVal = this.visit(ctx.getChild(0));
     const rightVal = this.visit(ctx.getChild(2));
@@ -206,6 +215,8 @@ export default class SkolensInterpreter extends SkolensVisitor {
       process.exit(1);
     }
 
+    if (op.symbol.type == SkolensParser.MOD) return leftVal % rightVal;
+    if (op.symbol.type == SkolensParser.EXP) return leftVal ** rightVal;
     if (op.symbol.type == SkolensParser.ADD) return leftVal + rightVal;
     if (op.symbol.type == SkolensParser.SUB) return leftVal - rightVal;
     if (op.symbol.type == SkolensParser.MUL) return leftVal * rightVal;
