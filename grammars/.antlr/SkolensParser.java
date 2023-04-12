@@ -18,8 +18,8 @@ public class SkolensParser extends Parser {
 	public static final int
 		ASSIGN=1, SEMI=2, ADD=3, SUB=4, MUL=5, DIV=6, EXP=7, MOD=8, LPAREN=9, 
 		RPAREN=10, LCURL=11, RCURL=12, EQ=13, NOTEQ=14, LESS=15, LESSEQ=16, LARG=17, 
-		LARGEQ=18, AND=19, OR=20, DOT=21, PRINT=22, IF=23, ELSE=24, BOOL=25, STRING=26, 
-		NUM=27, ID=28, WS=29, COMMENT=30;
+		LARGEQ=18, AND=19, OR=20, CONCAT=21, DOT=22, PRINT=23, IF=24, ELSE=25, 
+		BOOL=26, STRING=27, NUM=28, ID=29, WS=30, COMMENT=31;
 	public static final int
 		RULE_program = 0, RULE_stat = 1, RULE_conditionalStat = 2, RULE_ifStat = 3, 
 		RULE_elseIfStat = 4, RULE_elseStat = 5, RULE_teikt = 6, RULE_assign = 7, 
@@ -36,7 +36,7 @@ public class SkolensParser extends Parser {
 		return new String[] {
 			null, "'='", "';'", "'+'", "'-'", "'*'", "'/'", "'^'", "'%'", "'('", 
 			"')'", "'{'", "'}'", "'=='", "'!='", "'<'", "'<='", "'>'", "'>='", "'un'", 
-			"'vai'", "'.'", "'teikt '", "'ja'", "'citadi'"
+			"'vai'", "'..'", "'.'", "'teikt '", "'ja'", "'citadi'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
@@ -44,8 +44,8 @@ public class SkolensParser extends Parser {
 		return new String[] {
 			null, "ASSIGN", "SEMI", "ADD", "SUB", "MUL", "DIV", "EXP", "MOD", "LPAREN", 
 			"RPAREN", "LCURL", "RCURL", "EQ", "NOTEQ", "LESS", "LESSEQ", "LARG", 
-			"LARGEQ", "AND", "OR", "DOT", "PRINT", "IF", "ELSE", "BOOL", "STRING", 
-			"NUM", "ID", "WS", "COMMENT"
+			"LARGEQ", "AND", "OR", "CONCAT", "DOT", "PRINT", "IF", "ELSE", "BOOL", 
+			"STRING", "NUM", "ID", "WS", "COMMENT"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -647,6 +647,16 @@ public class SkolensParser extends Parser {
 		public TerminalNode NOTEQ() { return getToken(SkolensParser.NOTEQ, 0); }
 		public EqualityOpContext(ExprContext ctx) { copyFrom(ctx); }
 	}
+	public static class ConcatOpContext extends ExprContext {
+		public List<ExprContext> expr() {
+			return getRuleContexts(ExprContext.class);
+		}
+		public ExprContext expr(int i) {
+			return getRuleContext(ExprContext.class,i);
+		}
+		public TerminalNode CONCAT() { return getToken(SkolensParser.CONCAT, 0); }
+		public ConcatOpContext(ExprContext ctx) { copyFrom(ctx); }
+	}
 	public static class ParenContext extends ExprContext {
 		public TerminalNode LPAREN() { return getToken(SkolensParser.LPAREN, 0); }
 		public ExprContext expr() {
@@ -740,7 +750,7 @@ public class SkolensParser extends Parser {
 				throw new NoViableAltException(this);
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(134);
+			setState(137);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,10,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
@@ -748,7 +758,7 @@ public class SkolensParser extends Parser {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					setState(132);
+					setState(135);
 					_errHandler.sync(this);
 					switch ( getInterpreter().adaptivePredict(_input,9,_ctx) ) {
 					case 1:
@@ -756,11 +766,11 @@ public class SkolensParser extends Parser {
 						_localctx = new LogicOpContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(111);
-						if (!(precpred(_ctx, 7))) throw new FailedPredicateException(this, "precpred(_ctx, 7)");
+						if (!(precpred(_ctx, 8))) throw new FailedPredicateException(this, "precpred(_ctx, 8)");
 						setState(112);
 						match(AND);
 						setState(113);
-						expr(8);
+						expr(9);
 						}
 						break;
 					case 2:
@@ -768,11 +778,11 @@ public class SkolensParser extends Parser {
 						_localctx = new LogicOpContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(114);
-						if (!(precpred(_ctx, 6))) throw new FailedPredicateException(this, "precpred(_ctx, 6)");
+						if (!(precpred(_ctx, 7))) throw new FailedPredicateException(this, "precpred(_ctx, 7)");
 						setState(115);
 						match(OR);
 						setState(116);
-						expr(7);
+						expr(8);
 						}
 						break;
 					case 3:
@@ -780,11 +790,11 @@ public class SkolensParser extends Parser {
 						_localctx = new MathOpContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(117);
-						if (!(precpred(_ctx, 5))) throw new FailedPredicateException(this, "precpred(_ctx, 5)");
+						if (!(precpred(_ctx, 6))) throw new FailedPredicateException(this, "precpred(_ctx, 6)");
 						setState(118);
 						match(EXP);
 						setState(119);
-						expr(6);
+						expr(7);
 						}
 						break;
 					case 4:
@@ -792,7 +802,7 @@ public class SkolensParser extends Parser {
 						_localctx = new MathOpContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(120);
-						if (!(precpred(_ctx, 4))) throw new FailedPredicateException(this, "precpred(_ctx, 4)");
+						if (!(precpred(_ctx, 5))) throw new FailedPredicateException(this, "precpred(_ctx, 5)");
 						setState(121);
 						_la = _input.LA(1);
 						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << MUL) | (1L << DIV) | (1L << MOD))) != 0)) ) {
@@ -804,7 +814,7 @@ public class SkolensParser extends Parser {
 							consume();
 						}
 						setState(122);
-						expr(5);
+						expr(6);
 						}
 						break;
 					case 5:
@@ -812,7 +822,7 @@ public class SkolensParser extends Parser {
 						_localctx = new MathOpContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(123);
-						if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, "precpred(_ctx, 3)");
+						if (!(precpred(_ctx, 4))) throw new FailedPredicateException(this, "precpred(_ctx, 4)");
 						setState(124);
 						_la = _input.LA(1);
 						if ( !(_la==ADD || _la==SUB) ) {
@@ -824,7 +834,7 @@ public class SkolensParser extends Parser {
 							consume();
 						}
 						setState(125);
-						expr(4);
+						expr(5);
 						}
 						break;
 					case 6:
@@ -832,7 +842,7 @@ public class SkolensParser extends Parser {
 						_localctx = new CompOpContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(126);
-						if (!(precpred(_ctx, 2))) throw new FailedPredicateException(this, "precpred(_ctx, 2)");
+						if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, "precpred(_ctx, 3)");
 						setState(127);
 						_la = _input.LA(1);
 						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << LESS) | (1L << LESSEQ) | (1L << LARG) | (1L << LARGEQ))) != 0)) ) {
@@ -844,7 +854,7 @@ public class SkolensParser extends Parser {
 							consume();
 						}
 						setState(128);
-						expr(3);
+						expr(4);
 						}
 						break;
 					case 7:
@@ -852,7 +862,7 @@ public class SkolensParser extends Parser {
 						_localctx = new EqualityOpContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(129);
-						if (!(precpred(_ctx, 1))) throw new FailedPredicateException(this, "precpred(_ctx, 1)");
+						if (!(precpred(_ctx, 2))) throw new FailedPredicateException(this, "precpred(_ctx, 2)");
 						setState(130);
 						_la = _input.LA(1);
 						if ( !(_la==EQ || _la==NOTEQ) ) {
@@ -864,13 +874,25 @@ public class SkolensParser extends Parser {
 							consume();
 						}
 						setState(131);
+						expr(3);
+						}
+						break;
+					case 8:
+						{
+						_localctx = new ConcatOpContext(new ExprContext(_parentctx, _parentState));
+						pushNewRecursionContext(_localctx, _startState, RULE_expr);
+						setState(132);
+						if (!(precpred(_ctx, 1))) throw new FailedPredicateException(this, "precpred(_ctx, 1)");
+						setState(133);
+						match(CONCAT);
+						setState(134);
 						expr(2);
 						}
 						break;
 					}
 					} 
 				}
-				setState(136);
+				setState(139);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,10,_ctx);
 			}
@@ -901,7 +923,7 @@ public class SkolensParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(137);
+			setState(140);
 			match(ID);
 			}
 		}
@@ -926,25 +948,27 @@ public class SkolensParser extends Parser {
 	private boolean expr_sempred(ExprContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 0:
-			return precpred(_ctx, 7);
+			return precpred(_ctx, 8);
 		case 1:
-			return precpred(_ctx, 6);
+			return precpred(_ctx, 7);
 		case 2:
-			return precpred(_ctx, 5);
+			return precpred(_ctx, 6);
 		case 3:
-			return precpred(_ctx, 4);
+			return precpred(_ctx, 5);
 		case 4:
-			return precpred(_ctx, 3);
+			return precpred(_ctx, 4);
 		case 5:
-			return precpred(_ctx, 2);
+			return precpred(_ctx, 3);
 		case 6:
+			return precpred(_ctx, 2);
+		case 7:
 			return precpred(_ctx, 1);
 		}
 		return true;
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3 \u008e\4\2\t\2\4"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3!\u0091\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\3\2\7\2\30\n\2\f\2\16\2\33\13\2\3\2\3\2\3\3\3\3\3\3\3\3\3\3\3\3\5"+
 		"\3%\n\3\3\4\3\4\7\4)\n\4\f\4\16\4,\13\4\3\4\5\4/\n\4\3\5\3\5\3\5\3\5\3"+
@@ -952,36 +976,37 @@ public class SkolensParser extends Parser {
 		"\6E\n\6\f\6\16\6H\13\6\3\6\3\6\3\7\3\7\3\7\7\7O\n\7\f\7\16\7R\13\7\3\7"+
 		"\3\7\3\b\3\b\3\b\3\b\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\5\te"+
 		"\n\t\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\5\np\n\n\3\n\3\n\3\n\3\n\3\n"+
-		"\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\7\n\u0087"+
-		"\n\n\f\n\16\n\u008a\13\n\3\13\3\13\3\13\2\3\22\f\2\4\6\b\n\f\16\20\22"+
-		"\24\2\6\4\2\7\b\n\n\3\2\5\6\3\2\21\24\3\2\17\20\2\u0098\2\31\3\2\2\2\4"+
-		"$\3\2\2\2\6&\3\2\2\2\b\60\3\2\2\2\n=\3\2\2\2\fK\3\2\2\2\16U\3\2\2\2\20"+
-		"d\3\2\2\2\22o\3\2\2\2\24\u008b\3\2\2\2\26\30\5\4\3\2\27\26\3\2\2\2\30"+
-		"\33\3\2\2\2\31\27\3\2\2\2\31\32\3\2\2\2\32\34\3\2\2\2\33\31\3\2\2\2\34"+
-		"\35\7\2\2\3\35\3\3\2\2\2\36%\5\6\4\2\37%\5\16\b\2 %\5\20\t\2!\"\5\22\n"+
-		"\2\"#\7\4\2\2#%\3\2\2\2$\36\3\2\2\2$\37\3\2\2\2$ \3\2\2\2$!\3\2\2\2%\5"+
-		"\3\2\2\2&*\5\b\5\2\')\5\n\6\2(\'\3\2\2\2),\3\2\2\2*(\3\2\2\2*+\3\2\2\2"+
-		"+.\3\2\2\2,*\3\2\2\2-/\5\f\7\2.-\3\2\2\2./\3\2\2\2/\7\3\2\2\2\60\61\7"+
-		"\31\2\2\61\62\7\13\2\2\62\63\5\22\n\2\63\64\7\f\2\2\648\7\r\2\2\65\67"+
-		"\5\4\3\2\66\65\3\2\2\2\67:\3\2\2\28\66\3\2\2\289\3\2\2\29;\3\2\2\2:8\3"+
-		"\2\2\2;<\7\16\2\2<\t\3\2\2\2=>\7\32\2\2>?\7\31\2\2?@\7\13\2\2@A\5\22\n"+
-		"\2AB\7\f\2\2BF\7\r\2\2CE\5\4\3\2DC\3\2\2\2EH\3\2\2\2FD\3\2\2\2FG\3\2\2"+
-		"\2GI\3\2\2\2HF\3\2\2\2IJ\7\16\2\2J\13\3\2\2\2KL\7\32\2\2LP\7\r\2\2MO\5"+
-		"\4\3\2NM\3\2\2\2OR\3\2\2\2PN\3\2\2\2PQ\3\2\2\2QS\3\2\2\2RP\3\2\2\2ST\7"+
-		"\16\2\2T\r\3\2\2\2UV\7\30\2\2VW\5\22\n\2WX\7\4\2\2X\17\3\2\2\2YZ\7\36"+
-		"\2\2Z[\7\3\2\2[\\\5\22\n\2\\]\7\4\2\2]e\3\2\2\2^_\5\24\13\2_`\7\36\2\2"+
-		"`a\7\3\2\2ab\5\22\n\2bc\7\4\2\2ce\3\2\2\2dY\3\2\2\2d^\3\2\2\2e\21\3\2"+
-		"\2\2fg\b\n\1\2gp\7\36\2\2hp\7\35\2\2ip\7\34\2\2jp\7\33\2\2kl\7\13\2\2"+
-		"lm\5\22\n\2mn\7\f\2\2np\3\2\2\2of\3\2\2\2oh\3\2\2\2oi\3\2\2\2oj\3\2\2"+
-		"\2ok\3\2\2\2p\u0088\3\2\2\2qr\f\t\2\2rs\7\25\2\2s\u0087\5\22\n\ntu\f\b"+
-		"\2\2uv\7\26\2\2v\u0087\5\22\n\twx\f\7\2\2xy\7\t\2\2y\u0087\5\22\n\bz{"+
-		"\f\6\2\2{|\t\2\2\2|\u0087\5\22\n\7}~\f\5\2\2~\177\t\3\2\2\177\u0087\5"+
-		"\22\n\6\u0080\u0081\f\4\2\2\u0081\u0082\t\4\2\2\u0082\u0087\5\22\n\5\u0083"+
-		"\u0084\f\3\2\2\u0084\u0085\t\5\2\2\u0085\u0087\5\22\n\4\u0086q\3\2\2\2"+
-		"\u0086t\3\2\2\2\u0086w\3\2\2\2\u0086z\3\2\2\2\u0086}\3\2\2\2\u0086\u0080"+
-		"\3\2\2\2\u0086\u0083\3\2\2\2\u0087\u008a\3\2\2\2\u0088\u0086\3\2\2\2\u0088"+
-		"\u0089\3\2\2\2\u0089\23\3\2\2\2\u008a\u0088\3\2\2\2\u008b\u008c\7\36\2"+
-		"\2\u008c\25\3\2\2\2\r\31$*.8FPdo\u0086\u0088";
+		"\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3"+
+		"\n\3\n\7\n\u008a\n\n\f\n\16\n\u008d\13\n\3\13\3\13\3\13\2\3\22\f\2\4\6"+
+		"\b\n\f\16\20\22\24\2\6\4\2\7\b\n\n\3\2\5\6\3\2\21\24\3\2\17\20\2\u009c"+
+		"\2\31\3\2\2\2\4$\3\2\2\2\6&\3\2\2\2\b\60\3\2\2\2\n=\3\2\2\2\fK\3\2\2\2"+
+		"\16U\3\2\2\2\20d\3\2\2\2\22o\3\2\2\2\24\u008e\3\2\2\2\26\30\5\4\3\2\27"+
+		"\26\3\2\2\2\30\33\3\2\2\2\31\27\3\2\2\2\31\32\3\2\2\2\32\34\3\2\2\2\33"+
+		"\31\3\2\2\2\34\35\7\2\2\3\35\3\3\2\2\2\36%\5\6\4\2\37%\5\16\b\2 %\5\20"+
+		"\t\2!\"\5\22\n\2\"#\7\4\2\2#%\3\2\2\2$\36\3\2\2\2$\37\3\2\2\2$ \3\2\2"+
+		"\2$!\3\2\2\2%\5\3\2\2\2&*\5\b\5\2\')\5\n\6\2(\'\3\2\2\2),\3\2\2\2*(\3"+
+		"\2\2\2*+\3\2\2\2+.\3\2\2\2,*\3\2\2\2-/\5\f\7\2.-\3\2\2\2./\3\2\2\2/\7"+
+		"\3\2\2\2\60\61\7\32\2\2\61\62\7\13\2\2\62\63\5\22\n\2\63\64\7\f\2\2\64"+
+		"8\7\r\2\2\65\67\5\4\3\2\66\65\3\2\2\2\67:\3\2\2\28\66\3\2\2\289\3\2\2"+
+		"\29;\3\2\2\2:8\3\2\2\2;<\7\16\2\2<\t\3\2\2\2=>\7\33\2\2>?\7\32\2\2?@\7"+
+		"\13\2\2@A\5\22\n\2AB\7\f\2\2BF\7\r\2\2CE\5\4\3\2DC\3\2\2\2EH\3\2\2\2F"+
+		"D\3\2\2\2FG\3\2\2\2GI\3\2\2\2HF\3\2\2\2IJ\7\16\2\2J\13\3\2\2\2KL\7\33"+
+		"\2\2LP\7\r\2\2MO\5\4\3\2NM\3\2\2\2OR\3\2\2\2PN\3\2\2\2PQ\3\2\2\2QS\3\2"+
+		"\2\2RP\3\2\2\2ST\7\16\2\2T\r\3\2\2\2UV\7\31\2\2VW\5\22\n\2WX\7\4\2\2X"+
+		"\17\3\2\2\2YZ\7\37\2\2Z[\7\3\2\2[\\\5\22\n\2\\]\7\4\2\2]e\3\2\2\2^_\5"+
+		"\24\13\2_`\7\37\2\2`a\7\3\2\2ab\5\22\n\2bc\7\4\2\2ce\3\2\2\2dY\3\2\2\2"+
+		"d^\3\2\2\2e\21\3\2\2\2fg\b\n\1\2gp\7\37\2\2hp\7\36\2\2ip\7\35\2\2jp\7"+
+		"\34\2\2kl\7\13\2\2lm\5\22\n\2mn\7\f\2\2np\3\2\2\2of\3\2\2\2oh\3\2\2\2"+
+		"oi\3\2\2\2oj\3\2\2\2ok\3\2\2\2p\u008b\3\2\2\2qr\f\n\2\2rs\7\25\2\2s\u008a"+
+		"\5\22\n\13tu\f\t\2\2uv\7\26\2\2v\u008a\5\22\n\nwx\f\b\2\2xy\7\t\2\2y\u008a"+
+		"\5\22\n\tz{\f\7\2\2{|\t\2\2\2|\u008a\5\22\n\b}~\f\6\2\2~\177\t\3\2\2\177"+
+		"\u008a\5\22\n\7\u0080\u0081\f\5\2\2\u0081\u0082\t\4\2\2\u0082\u008a\5"+
+		"\22\n\6\u0083\u0084\f\4\2\2\u0084\u0085\t\5\2\2\u0085\u008a\5\22\n\5\u0086"+
+		"\u0087\f\3\2\2\u0087\u0088\7\27\2\2\u0088\u008a\5\22\n\4\u0089q\3\2\2"+
+		"\2\u0089t\3\2\2\2\u0089w\3\2\2\2\u0089z\3\2\2\2\u0089}\3\2\2\2\u0089\u0080"+
+		"\3\2\2\2\u0089\u0083\3\2\2\2\u0089\u0086\3\2\2\2\u008a\u008d\3\2\2\2\u008b"+
+		"\u0089\3\2\2\2\u008b\u008c\3\2\2\2\u008c\23\3\2\2\2\u008d\u008b\3\2\2"+
+		"\2\u008e\u008f\7\37\2\2\u008f\25\3\2\2\2\r\31$*.8FPdo\u0089\u008b";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

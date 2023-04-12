@@ -253,6 +253,16 @@ export default class SkolensInterpreter extends SkolensVisitor {
     if (op.symbol.type == SkolensParser.NOTEQ) return leftVal != rightVal;
   }
 
+  visitConcatOp(ctx) {
+    let leftVal = this.visit(ctx.getChild(0));
+    let rightVal = this.visit(ctx.getChild(2));
+
+    if (typeof leftVal == 'boolean') leftVal = 'patiess';
+    if (typeof rightVal == 'boolean') rightVal = 'patiess';
+
+    return String(leftVal) + String(rightVal);
+  }
+
   #isValueTruthy(val) {
     if (typeof val == 'boolean') {
       return val;

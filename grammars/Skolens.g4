@@ -26,7 +26,8 @@ expr:
 	| expr ('*' | '/' | '%') expr			# MathOp
 	| expr ('+' | '-') expr					# MathOp
 	| expr ('<' | '<=' | '>' | '>=') expr	# CompOp
-	| expr ('==' | '!=') expr				# EqualityOp;
+	| expr ('==' | '!=') expr				# EqualityOp
+	| expr '..' expr						# ConcatOp;
 
 type: ID;
 
@@ -52,6 +53,7 @@ LARG: '>';
 LARGEQ: '>=';
 AND: 'un';
 OR: 'vai';
+CONCAT: '..';
 DOT: '.';
 
 PRINT: 'teikt ';
