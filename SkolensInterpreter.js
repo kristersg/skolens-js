@@ -5,7 +5,8 @@ import SkolensParser from './lib/SkolensParser.js';
 // ctx.getChildCount() - How many children are there? If there is none, then this node represents a leaf node
 // ctx.getChild(n) - Get the n-th child of the node
 
-// TODO deal with bools in expressions
+const MATH_OPS = ['*', '/', '+', '-'];
+const COMP_OPS = ['==', '!=', '<', '<=', '>', '>='];
 
 export default class SkolensInterpreter extends SkolensVisitor {
   static types = { skaitlis: 'number', teksts: 'string', buls: 'boolean' };
@@ -87,19 +88,19 @@ export default class SkolensInterpreter extends SkolensVisitor {
       // check if a variable with the name already exists
       if (this.variables.has(varName)) {
         console.error(`Error: variable with name '${varName}' already exists!`);
-        // TODO handle errors (stop traversal)
+        process.exit(1);
       }
 
       // check if a correct type is provided
       if (!Object.keys(SkolensInterpreter.types).includes(varType)) {
         console.error(`Error: type '${varType}' not recognized!`);
-        // TODO handle errors (stop traversal)
+        process.exit(1);
       }
 
       // check if variable and expression types match
       if (SkolensInterpreter.types[varType] != typeof varVal) {
         console.error(`Error: can not assign a value of type ${typeof varVal} to variable of type ${SkolensInterpreter.types[varType]}!`);
-        // TODO handle errors (stop traversal)
+        process.exit(1);
       }
 
       // if all good, add the new variable to variable pool
@@ -113,13 +114,13 @@ export default class SkolensInterpreter extends SkolensVisitor {
       // check if a variable with the name already exists
       if (!this.variables.has(varName)) {
         console.error(`Error: variable with name '${varName}' not found in current scope!`);
-        // TODO handle errors (stop traversal)
+        process.exit(1);
       }
 
       // check if variable and expression types match
       if (this.variables.get(varName)['type'] != typeof varVal) {
         console.error(`Error: can not assign a value of type ${typeof varVal} to variable of type ${this.variables.get(varName)['type']}!`);
-        // TODO handle errors (stop traversal)
+        process.exit(1);
       }
 
       // if all good, assign the new value
@@ -127,43 +128,34 @@ export default class SkolensInterpreter extends SkolensVisitor {
     }
   }
 
-  // if text is involved -> allow only +
-  // else -> allow all ops
   visitExpr(ctx) {
     // if has single child, return it's value
     if (ctx.getChildCount() == 1) {
       const child = ctx.getChild(0);
       // if value is a string, remove quotes and return
       if (child.symbol.type == SkolensParser.STRING) {
-        return child.getText().slice(1, -1);
       }
       // if value is a number, return number value
       if (child.symbol.type == SkolensParser.INT) {
-        return parseFloat(child.getText());
       }
       // if value is a bool, return true or false
       if (child.symbol.type == SkolensParser.BOOL) {
-        return child.getText() == 'patiess';
       }
       // if value is an identificator, return the variable's value
       if (child.symbol.type == SkolensParser.ID) {
-        if (this.variables.has(child.getText())) {
-          return this.variables.get(child.getText())['value'];
-        }
-        console.error(`Error: variable with name '${child.getText()}' is not defined!`);
-        // TODO handle errors (stop traversal)
       }
     }
     // if has 3 children, calculate the value of expression
     else if (ctx.getChildCount() == 3) {
       // if first and last children are parenthases, return the expression between them
       if (ctx.getChild(0).symbol && ctx.getChild(0).symbol.type == SkolensParser.LPAREN) {
-        return this.visit(ctx.getChild(1));
       }
       // get the two child values
       const leftVal = this.visit(ctx.getChild(0));
       const rightVal = this.visit(ctx.getChild(2));
       const op = ctx.getChild(1);
+
+      // if op is a comparison,
 
       // if both numbers, allow all operations
       if (typeof leftVal == 'number' && typeof rightVal == 'number') {
@@ -175,9 +167,79 @@ export default class SkolensInterpreter extends SkolensVisitor {
       // if at least one is a string, allow only addition
       else {
         console.error('Error: mathematical operations can only be used on numbers!');
-        // TODO handle errors (stop traversal)
+        process.exit(1);
       }
     }
+  }
+
+  visitId(ctx) {
+    if (this.variables.has(ctx.getChild(0).getText())) {
+      return this.variables.get(ctx.getChild(0).getText())['value'];
+    }
+    console.error(`Error: variable with name '${ctx.getChild(0).getText()}' is not defined!`);
+    process.exit(1);
+  }
+
+  visitNum(ctx) {
+    return parseFloat(ctx.getChild(0).getText());
+  }
+
+  visitString(ctx) {
+    return ctx.getChild(0).getText().slice(1, -1);
+  }
+
+  visitBool(ctx) {
+    return ctx.getChild(0).getText() == 'patiess';
+  }
+
+  visitParen(ctx) {
+    return this.visit(ctx.getChild(1));
+  }
+
+  visitMathOp(ctx) {
+    const leftVal = this.visit(ctx.getChild(0));
+    const rightVal = this.visit(ctx.getChild(2));
+    const op = ctx.getChild(1);
+
+    if (typeof leftVal != 'number' || typeof rightVal != 'number') {
+      onsole.error('Error: mathematical operations can only be used on numbers!');
+      process.exit(1);
+    }
+
+    if (op.symbol.type == SkolensParser.ADD) return leftVal + rightVal;
+    if (op.symbol.type == SkolensParser.SUB) return leftVal - rightVal;
+    if (op.symbol.type == SkolensParser.MUL) return leftVal * rightVal;
+    if (op.symbol.type == SkolensParser.DIV) return leftVal / rightVal;
+  }
+
+  visitCompOp(ctx) {
+    const leftVal = this.visit(ctx.getChild(0));
+    const rightVal = this.visit(ctx.getChild(2));
+    const op = ctx.getChild(1);
+
+    if (typeof leftVal != 'number' || typeof rightVal != 'number') {
+      onsole.error(`Error: comparison operation ${op.getText()} can only be used on numbers!`);
+      process.exit(1);
+    }
+
+    if (op.symbol.type == SkolensParser.LESS) return leftVal < rightVal;
+    if (op.symbol.type == SkolensParser.LESSEQ) return leftVal <= rightVal;
+    if (op.symbol.type == SkolensParser.LARG) return leftVal > rightVal;
+    if (op.symbol.type == SkolensParser.LARGEQ) return leftVal >= rightVal;
+  }
+
+  visitEqualityOp(ctx) {
+    const leftVal = this.visit(ctx.getChild(0));
+    const rightVal = this.visit(ctx.getChild(2));
+    const op = ctx.getChild(1);
+
+    if (typeof leftVal != typeof rightVal) {
+      onsole.error(`Error: comparison operation ${op.getText()} can only be used on values of equal types!`);
+      process.exit(1);
+    }
+
+    if (op.symbol.type == SkolensParser.EQ) return leftVal == rightVal;
+    if (op.symbol.type == SkolensParser.NOTEQ) return leftVal != rightVal;
   }
 
   #isValueTruthy(val) {

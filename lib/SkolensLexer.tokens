@@ -1,4 +1,4 @@
-EQ=1
+ASSIGN=1
 SEMI=2
 ADD=3
 SUB=4
@@ -8,15 +8,21 @@ LPAREN=7
 RPAREN=8
 LCURL=9
 RCURL=10
-PRINT=11
-IF=12
-ELSE=13
-BOOL=14
-STRING=15
-INT=16
-ID=17
-WS=18
-COMMENT=19
+EQ=11
+NOTEQ=12
+LESS=13
+LESSEQ=14
+LARG=15
+LARGEQ=16
+PRINT=17
+IF=18
+ELSE=19
+BOOL=20
+STRING=21
+NUM=22
+ID=23
+WS=24
+COMMENT=25
 '='=1
 ';'=2
 '+'=3
@@ -27,6 +33,12 @@ COMMENT=19
 ')'=8
 '{'=9
 '}'=10
-'teikt '=11
-'ja'=12
-'citadi'=13
+'=='=11
+'!='=12
+'<'=13
+'<='=14
+'>'=15
+'>='=16
+'teikt '=17
+'ja'=18
+'citadi'=19

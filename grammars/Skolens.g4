@@ -15,21 +15,27 @@ teikt: 'teikt ' expr ';';
 assign: ID '=' expr ';' | type ID '=' expr ';';
 
 expr:
-	ID
-	| INT
-	| STRING
-	| BOOL
-	| '(' expr ')'
-	| expr '*' expr
-	| expr '/' expr
-	| expr '+' expr
-	| expr '-' expr;
+	ID					# Id
+	| NUM				# Num
+	| STRING			# String
+	| BOOL				# Bool
+	| '(' expr ')'		# Paren
+	| expr '*' expr		# MathOp
+	| expr '/' expr		# MathOp
+	| expr '+' expr		# MathOp
+	| expr '-' expr		# MathOp
+	| expr '<' expr		# CompOp
+	| expr '<=' expr	# CompOp
+	| expr '>' expr		# CompOp
+	| expr '>=' expr	# CompOp
+	| expr '==' expr	# EqualityOp
+	| expr '!=' expr	# EqualityOp;
 
 type: ID;
 
 // ----------------------- ----- LEXER RULES ----- -----------------------
 
-EQ: '=';
+ASSIGN: '=';
 SEMI: ';';
 ADD: '+';
 SUB: '-';
@@ -39,6 +45,12 @@ LPAREN: '(';
 RPAREN: ')';
 LCURL: '{';
 RCURL: '}';
+EQ: '==';
+NOTEQ: '!=';
+LESS: '<';
+LESSEQ: '<=';
+LARG: '>';
+LARGEQ: '>=';
 
 PRINT: 'teikt ';
 IF: 'ja';
@@ -47,7 +59,7 @@ ELSE: 'citadi';
 BOOL: 'patiess' | 'aplams';
 STRING: '"' (ESC | ~["\\])* '"';
 fragment ESC: '\\' ["\\];
-INT: [0-9]+;
+NUM: [+|-]? [0-9]+ (.[0-9]+)?;
 ID: [a-zA-Z_][a-zA-Z_0-9]*;
 WS: [ \t\n\r\f]+ -> skip;
 
