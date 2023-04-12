@@ -131,3 +131,6 @@ dist
 
 # Apple's DS_Store
 .DS_Store
+
+# Program files in Skolēns language
+*.sk
