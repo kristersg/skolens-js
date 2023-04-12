@@ -36,7 +36,7 @@ public class SkolensParser extends Parser {
 		return new String[] {
 			null, "'='", "';'", "'+'", "'-'", "'*'", "'/'", "'^'", "'%'", "'('", 
 			"')'", "'{'", "'}'", "'=='", "'!='", "'<'", "'<='", "'>'", "'>='", "'un'", 
-			"'vai'", "'..'", "'.'", "'teikt '", "'ja'", "'citadi'"
+			"'vai'", "'..'", "'.'", "'teikt '", "'ja'", "'cit\u0101di'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();

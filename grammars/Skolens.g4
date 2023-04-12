@@ -7,8 +7,8 @@ stat: conditionalStat | teikt | assign | expr ';';
 conditionalStat: ifStat elseIfStat* elseStat?;
 
 ifStat: 'ja' '(' expr ')' '{' stat* '}';
-elseIfStat: 'citadi' 'ja' '(' expr ')' '{' stat* '}';
-elseStat: 'citadi' '{' stat* '}';
+elseIfStat: 'cit\u0101di' 'ja' '(' expr ')' '{' stat* '}';
+elseStat: 'cit\u0101di' '{' stat* '}';
 
 teikt: 'teikt ' expr ';';
 
@@ -58,12 +58,12 @@ DOT: '.';
 
 PRINT: 'teikt ';
 IF: 'ja';
-ELSE: 'citadi';
+ELSE: 'cit\u0101di';
 
 BOOL: 'patiess' | 'aplams';
 STRING: '"' (ESC | ~["\\])* '"';
 fragment ESC: '\\' ["\\];
 NUM: [+|-]? [0-9]+ (DOT [0-9]+)?;
-ID: [a-zA-Z_][a-zA-Z_0-9]*;
+ID: [a-zA-Z\u0080-\uFFFF_][a-zA-Z\u0080-\uFFFF_0-9]*;
 WS: [ \t\n\r\f]+ -> skip;
 COMMENT: '//' ~[\r\n]* -> skip;

@@ -5,11 +5,8 @@ import SkolensParser from './lib/SkolensParser.js';
 // ctx.getChildCount() - How many children are there? If there is none, then this node represents a leaf node
 // ctx.getChild(n) - Get the n-th child of the node
 
-const MATH_OPS = ['*', '/', '+', '-'];
-const COMP_OPS = ['==', '!=', '<', '<=', '>', '>='];
-
 export default class SkolensInterpreter extends SkolensVisitor {
-  static types = { skaitlis: 'number', teksts: 'string', buls: 'boolean' };
+  static types = { skaitlis: 'number', teksts: 'string', būls: 'boolean' };
   variables = new Map();
 
   start(ctx) {

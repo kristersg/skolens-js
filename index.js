@@ -16,9 +16,8 @@ if (!fs.existsSync(args[0])) {
   console.error(`Kļūda: norādītais fails netika atrasts! (${args[0]})`);
   process.exit(1);
 }
-const data = fs.readFileSync(args[0], { encoding: 'utf8' });
 
-const chars = new antlr4.InputStream(data);
+const chars = new antlr4.CharStreams.fromPathSync(args[0]);
 const lexer = new SkolensLexer(chars);
 const tokens = new antlr4.CommonTokenStream(lexer);
 const parser = new SkolensParser(tokens);
