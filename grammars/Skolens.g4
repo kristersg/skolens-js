@@ -15,25 +15,18 @@ teikt: 'teikt ' expr ';';
 assign: ID '=' expr ';' | type ID '=' expr ';';
 
 expr:
-	ID					# Id
-	| NUM				# Num
-	| STRING			# String
-	| BOOL				# Bool
-	| '(' expr ')'		# Paren
-	| expr 'un' expr	# LogicOp
-	| expr 'vai' expr	# LogicOp
-	| expr '^' expr		# MathOp
-	| expr '%' expr		# ModOp
-	| expr '*' expr		# MathOp
-	| expr '/' expr		# MathOp
-	| expr '+' expr		# MathOp
-	| expr '-' expr		# MathOp
-	| expr '<' expr		# CompOp
-	| expr '<=' expr	# CompOp
-	| expr '>' expr		# CompOp
-	| expr '>=' expr	# CompOp
-	| expr '==' expr	# EqualityOp
-	| expr '!=' expr	# EqualityOp;
+	ID										# Id
+	| NUM									# Num
+	| STRING								# String
+	| BOOL									# Bool
+	| '(' expr ')'							# Paren
+	| expr 'un' expr						# LogicOp
+	| expr 'vai' expr						# LogicOp
+	| expr '^' expr							# MathOp
+	| expr ('*' | '/' | '%') expr			# MathOp
+	| expr ('+' | '-') expr					# MathOp
+	| expr ('<' | '<=' | '>' | '>=') expr	# CompOp
+	| expr ('==' | '!=') expr				# EqualityOp;
 
 type: ID;
 
