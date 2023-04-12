@@ -7,7 +7,7 @@ import SkolensParser from './lib/SkolensParser.js';
 
 // TODO deal with bools in expressions
 
-export default class MyVisitor extends SkolensVisitor {
+export default class SkolensInterpreter extends SkolensVisitor {
   static types = { skaitlis: 'number', teksts: 'string', buls: 'boolean' };
   variables = new Map();
 
@@ -58,19 +58,19 @@ export default class MyVisitor extends SkolensVisitor {
       }
 
       // check if a correct type is provided
-      if (!Object.keys(MyVisitor.types).includes(varType)) {
+      if (!Object.keys(SkolensInterpreter.types).includes(varType)) {
         console.error(`Error: type '${varType}' not recognized!`);
         // TODO handle errors (stop traversal)
       }
 
       // check if variable and expression types match
-      if (MyVisitor.types[varType] != typeof varVal) {
-        console.error(`Error: can not assign a value of type ${typeof varVal} to variable of type ${MyVisitor.types[varType]}!`);
+      if (SkolensInterpreter.types[varType] != typeof varVal) {
+        console.error(`Error: can not assign a value of type ${typeof varVal} to variable of type ${SkolensInterpreter.types[varType]}!`);
         // TODO handle errors (stop traversal)
       }
 
       // if all good, add the new variable to variable pool
-      this.variables.set(varName, { type: MyVisitor.types[varType], value: varVal });
+      this.variables.set(varName, { type: SkolensInterpreter.types[varType], value: varVal });
     }
     // if has 4 children, try to reassign
     else {
