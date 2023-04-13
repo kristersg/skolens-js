@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import antlr4 from 'antlr4';
 import SkolensLexer from './lib/SkolensLexer.js';
 import SkolensParser from './lib/SkolensParser.js';
-import SkolensInterpreter from './SkolensInterpreter.js';
+import SkolensInterpreter from './lib/SkolensInterpreter.js';
 
 const args = process.argv.slice(2);
 if (args.length == 0) {

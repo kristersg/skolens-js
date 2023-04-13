@@ -1,9 +1,15 @@
 grammar Skolens;
 
-program: stat* EOF;
+program: (stat | funcDef)* EOF;
 
 stat:
-	conditionalStat
+	returnStat
+	| breakStat
+	| continueStat
+	| conditionalStat
+	| whileLoop
+	| doWhileLoop
+	| forLoop
 	| teikt
 	| variableMethodCalls
 	| assign
@@ -14,6 +20,17 @@ conditionalStat: ifStat elseIfStat* elseStat?;
 ifStat: 'ja' '(' expr ')' '{' stat* '}';
 elseIfStat: 'cit\u0101di' 'ja' '(' expr ')' '{' stat* '}';
 elseStat: 'cit\u0101di' '{' stat* '}';
+
+whileLoop: WHILE '(' expr ')' '{' stat* '}';
+doWhileLoop: DO '{' stat* '}' WHILE '(' expr ')' ';';
+forLoop: EACH ID FROM expr TO expr '{' stat* '}';
+
+funcDef:
+	type ID '(' ((type ID) (',' (type ID))*)? ')' '{' stat* '}';
+
+returnStat: 'atgriezt' expr ';' | 'atgriezt' ';';
+breakStat: 'izlauzties' ';';
+continueStat: 'izlaist' ';';
 
 teikt: PRINT expr ';';
 
@@ -33,6 +50,7 @@ expr:
 	| STRING								# String
 	| BOOL									# Bool
 	| '[' (expr (',' expr)*)? ']'			# List
+	| ID '(' (expr (',' expr)*)? ')'		# FuncCall
 	| ID '[' expr ']'						# ListAccess
 	| ID '.' GARUMS							# ListLength
 	| '(' expr ')'							# Paren
@@ -83,6 +101,14 @@ GARUMS: 'garums';
 PRINT: 'teikt';
 IF: 'ja';
 ELSE: 'cit\u0101di';
+WHILE: 'kam\u0113r';
+DO: 'dar\u012Bt';
+EACH: 'katram';
+FROM: 'no';
+TO: 'l\u012Bdz';
+RETURN: 'atgriezt';
+BREAK: 'izlauzties';
+CONTINUE: 'izlaist';
 
 BOOL: 'patiess' | 'aplams';
 STRING: '\'' (ESC | ~['\\])* '\'';
