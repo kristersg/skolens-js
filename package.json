@@ -1,17 +1,21 @@
 {
-  "name": "antlr-js-test",
-  "version": "1.0.0",
-  "description": "",
+  "name": "skolens",
+  "version": "1.0.6",
+  "description": "Vienkārša programmēšanas valoda ar sintaksi latviešu valodā izmantošanai izglītībā.",
   "main": "index.js",
+  "bin": {
+    "skolens": "./bin/skolens.js"
+  },
   "scripts": {
-    "start": "node index.js",
+    "postinstall": "npm link",
+    "start": "node ./bin/skolens.js",
     "antlr-js": "antlr4 -Dlanguage=JavaScript -lib grammars -o lib -visitor -Xexact-output-dir grammars/Skolens.g4"
   },
   "author": "Kristers Mārtiņš Gelašs",
   "license": "ISC",
+  "repository": {},
   "dependencies": {
-    "antlr4": "^4.12.0",
-    "fs": "^0.0.1-security"
+    "antlr4": "^4.12.0"
   },
   "type": "module"
 }

@@ -1,10 +1,11 @@
-import * as fs from 'fs';
+#!/usr/bin/env node
 
+import * as fs from 'fs';
 import antlr4 from 'antlr4';
 import { ErrorListener } from 'antlr4';
-import SkolensLexer from './lib/SkolensLexer.js';
-import SkolensParser from './lib/SkolensParser.js';
-import SkolensInterpreter from './lib/SkolensInterpreter.js';
+import SkolensLexer from '../lib/SkolensLexer.js';
+import SkolensParser from '../lib/SkolensParser.js';
+import SkolensInterpreter from '../lib/SkolensInterpreter.js';
 
 try {
   class LexerErrorListener extends ErrorListener {
