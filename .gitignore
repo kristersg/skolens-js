@@ -134,3 +134,6 @@ dist
 
 # Program files in Skolēns language
 *.sk
+
+# .hintrc file
+.hintrc

@@ -1,6 +1,6 @@
 {
   "name": "skolens",
-  "version": "1.0.6",
+  "version": "1.0.8",
   "description": "Vienkārša programmēšanas valoda ar sintaksi latviešu valodā izmantošanai izglītībā.",
   "main": "index.js",
   "bin": {
@@ -13,7 +13,7 @@
   },
   "author": "Kristers Mārtiņš Gelašs",
   "license": "ISC",
-  "repository": {},
+  "repository": "github:kristersg/skolens-js",
   "dependencies": {
     "antlr4": "^4.12.0"
   },
