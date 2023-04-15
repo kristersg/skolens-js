@@ -1,13 +1,12 @@
 {
   "name": "skolens",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Vienkārša programmēšanas valoda ar sintaksi latviešu valodā izmantošanai izglītībā.",
   "main": "index.js",
   "bin": {
     "skolens": "./bin/skolens.js"
   },
   "scripts": {
-    "postinstall": "npm link",
     "start": "node ./bin/skolens.js",
     "antlr-js": "antlr4 -Dlanguage=JavaScript -lib grammars -o lib -visitor -Xexact-output-dir grammars/Skolens.g4"
   },
