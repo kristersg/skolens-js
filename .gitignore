@@ -137,3 +137,6 @@ dist
 
 # .hintrc file
 .hintrc
+
+# ANTLR plugin generated files
+grammars/.antlr/

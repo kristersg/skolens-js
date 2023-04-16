@@ -28,7 +28,7 @@ forLoop: EACH ID FROM expr TO expr '{' stat* '}';
 funcDef:
 	type ID '(' ((type ID) (',' (type ID))*)? ')' '{' stat* '}';
 
-returnStat: 'atgriezt' expr ';' | 'atgriezt' ';';
+returnStat: 'atgriezt' expr? ';';
 breakStat: 'izlauzties' ';';
 continueStat: 'izlaist' ';';
 
@@ -114,6 +114,6 @@ BOOL: 'patiess' | 'aplams';
 STRING: '\'' (ESC | ~['\\])* '\'';
 fragment ESC: '\\' '\'';
 NUM: [+|-]? [0-9]+ (DOT [0-9]+)?;
-ID: [a-zA-Z\u0080-\uFFFF_][a-zA-Z\u0080-\uFFFF_0-9]*;
+ID: [a-zA-Z\u0100-\u017F_][a-zA-Z\u0100-\u017F_0-9]*;
 WS: [ \t\n\r\f]+ -> skip;
 COMMENT: '//' ~[\r\n]* -> skip;

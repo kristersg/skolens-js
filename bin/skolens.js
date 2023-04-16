@@ -56,7 +56,7 @@ try {
 
   const tree = parser.program();
 
-  const output = new SkolensInterpreter().start(tree);
+  new SkolensInterpreter().start(tree);
 } catch (error) {
-  console.error(error);
+  console.error('Notika kļūda programmas izpildē. Pārliecinies, ka kods ir pareizs.');
 }
