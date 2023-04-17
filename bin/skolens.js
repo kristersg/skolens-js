@@ -10,20 +10,15 @@ import SkolensInterpreter from '../lib/SkolensInterpreter.js';
 try {
   class LexerErrorListener extends ErrorListener {
     syntaxError(recognizer, offendingSymbol, line, column, message, e) {
-      const error = new Error(`kļūda rindā ${line}, kolonnā ${column}: neatpazīts simbols '${message.split("'")[1]}'`);
-      error.name = 'SintaksesKļūda';
-      error.stack = '';
-      throw error;
+      console.error(`Sintakses kļūda rindā ${line}, kolonnā ${column}: neatpazīta tekstvienība "${message.substring(message.indexOf("'") + 1, message.lastIndexOf("'"))}"`);
+      process.exit(1);
     }
   }
 
   class ParserErrorListener extends ErrorListener {
     syntaxError(recognizer, offendingSymbol, line, column, message, e) {
-      const found = offendingSymbol.text;
-      const error = new Error(`kļūda rindā ${line}, kolonnā ${column}: nepareizs simbols '${found}'`);
-      error.name = 'SintaksesKļūda';
-      error.stack = '';
-      throw error;
+      console.error(`Sintakses kļūda rindā ${line}, kolonnā ${column}: nepareizs simbols "${offendingSymbol.text}"`);
+      process.exit(1);
     }
   }
 
